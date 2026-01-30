@@ -12,5 +12,6 @@ public class LabelData : ScriptableObject
     public string labelName;
     public LabelType labelType;
     public GameObject behaviourPrefab;
+    public GameObject labelUIPrefab;
 }
 

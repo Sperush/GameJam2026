@@ -6,14 +6,17 @@ public class DragLable : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoin
     public LabelData labelData;
     private Canvas canvas;
     private Vector3 offset;
+    private CanvasGroup canvasGroup;
     void Start()
     {
         canvas = GetComponentInParent<Canvas>();
+        canvasGroup = GetComponent<CanvasGroup>();
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
         transform.SetParent(canvas.transform);
+        canvasGroup.blocksRaycasts = false;
         offset = transform.position - GetMouseWorldPos();
     }
     Vector3 GetMouseWorldPos() //lấy vị trí chuột
@@ -30,6 +33,7 @@ public class DragLable : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoin
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        canvasGroup.blocksRaycasts = true;
         GameObject target = eventData.pointerCurrentRaycast.gameObject;
         if (target == null) return;
 
