@@ -5,41 +5,54 @@ public class LabelReceiver : MonoBehaviour
 {
     public ButtonType typeBtn;
     public Transform lable;      // label đang gắn
-    public Canvas canvas;        // canvas gốc
 
     public bool ApplyLabel(Transform newLabel)
     {
         DragLable newDrag = newLabel.GetComponent<DragLable>();
         if (newDrag == null) return false;
-        // Nếu đã có label
+
+        // 🔒 TH3: kéo vào chính mình → snapback
+        if (newLabel.parent == transform)
+        {
+            newLabel.localPosition = Vector3.zero;
+            return false;
+        }
+
+        // 🔄 nếu object đã có label
         if (lable != null)
         {
             DragLable oldDrag = lable.GetComponent<DragLable>();
 
-            // Nếu cùng slot → thay thế
-            if (oldDrag.type != newDrag.type)
+            // 🔁 TH2: thay thế label
+            if (oldDrag != null)
             {
-                // đẩy label cũ ra canvas
-                lable.SetParent(canvas.transform);
-                lable.localPosition = Vector3.zero;
-            }
-            else
-            {
-                LabelReceiver receiver = oldDrag.GetComponentInParent<LabelReceiver>();
-                if (receiver != null)
+                // tìm slot trống cho label cũ
+                bool moved = false;
+                foreach (var m in GameController.Instance.indexLable)
                 {
-                    receiver.lable = null;
+                    if (m.typeBtn != typeBtn && m.lable == null)
+                    {
+                        lable.SetParent(m.transform);
+                        lable.localPosition = Vector3.zero;
+                        m.lable = lable;
+                        moved = true;
+                        break;
+                    }
                 }
-                lable.SetParent(transform.parent);
-                lable.localPosition = Vector3.zero;
-                return false;
+
+                // không có slot trống → không cho thả
+                if (!moved)
+                {
+                    newLabel.localPosition = Vector3.zero;
+                    return false;
+                }
             }
         }
 
-        // Gắn label mới vào object
         newLabel.SetParent(transform);
         newLabel.localPosition = Vector3.zero;
         lable = newLabel;
+
         return true;
     }
 }

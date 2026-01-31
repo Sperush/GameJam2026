@@ -22,17 +22,9 @@ public class SpringBackSlider : MonoBehaviour
     void OnValueChanged(float value)
     {
         GameController.Instance.txtSalary.SetText("Salary: " + (int)slider.value + " Gold");
+        GameController.Instance.typewriter.isMove = slider.value == 0f;
         if (isSpringing) return;
 
-        if (!GameController.Instance.isBlockSlider && slider.value == 0f)
-        {
-            GameController.Instance.typewriter.isMove = true;
-            GameController.Instance.Box.SetActive(true);
-            PanelManager.Instance.ClosePanel();
-            PanelManager.Instance.chat.SetActive(true);
-            GameController.Instance.typewriter.Play("WHAT?! Working for exposure?! I QUIT!!!");
-            return;
-        }
         // nếu player kéo xuống
         if (GameController.Instance.isBlockSlider && value < lockedValue)
         {

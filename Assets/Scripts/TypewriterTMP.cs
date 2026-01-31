@@ -16,6 +16,7 @@ public class TypewriterTMP : MonoBehaviour
     private string txt;
     private Tween currentHandTween;
     public bool isMove;
+    public bool moving;
     void Awake()
     {
         tmp = GetComponent<TextMeshProUGUI>();
@@ -61,25 +62,26 @@ public class TypewriterTMP : MonoBehaviour
     IEnumerator Hide()
     {
         yield return new WaitForSeconds(2f);
-        if(PanelManager.Instance != null) PanelManager.Instance.chat.SetActive(false);
-        if (isMove)
+        if(PanelManager.Instance != null && PanelManager.Instance.chat != null) PanelManager.Instance.chat.SetActive(false);
+        if (isMove && moving)
         {
-            Vector3 pos = GameController.Instance.Box.transform.position;
+            Vector3 local = GameController.Instance.Char.transform.localScale;
+            local.x = -local.x;
+            GameController.Instance.Char.transform.localScale = local;
             Vector3 pos2 = GameController.Instance.Char.transform.position;
-            var m = GameController.Instance.Char.GetComponent<LabelReceiver>();
-            m.lable.SetParent(m.canvas.transform);
-            pos.x -= 2.2f;
-            pos2.x += 5f;
+            pos2.x += 10f;
             KillCurrentTween(); // Kill cái cũ nếu có
 
             Sequence seq = DOTween.Sequence();
             seq.Append(GameController.Instance.Char.transform.DOMove(pos2, 1f));
-            seq.Append(GameController.Instance.Box.transform.DOMove(pos, 1f));
             currentHandTween = seq;
             seq.OnComplete(() =>
             {
+                GameController.Instance.isDisControl = false;
+                GameController.Instance.canOpenBox = true;
                 GameController.Instance.isBlock = false;
             });
+            moving = false;
             isMove = false;
         }
     }

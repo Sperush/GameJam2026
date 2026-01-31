@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - FxTemporaire
   layers:
   - Default
   - TransparentFX
@@ -43,6 +44,9 @@ TagManager:
     locked: 0
   - name: UI
     uniqueID: 2526834177
+    locked: 0
+  - name: VFX
+    uniqueID: 1029237705
     locked: 0
   - name: Lable
     uniqueID: 3058363107

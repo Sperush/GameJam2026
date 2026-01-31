@@ -10,6 +10,7 @@ public class Level1UIManager : MonoBehaviour
     public GameObject arrowHint;
     public TypewriterTMP narrator;
     public static Level1UIManager Instance;
+    public CameraShakeSmooth cameraShake;
 
     void Start()
     {
@@ -18,14 +19,12 @@ public class Level1UIManager : MonoBehaviour
 
     public IEnumerator Sequence()
     {
-        narrator.Play("Loading...");
-        yield return new WaitForSeconds(2f);
-
+        yield return new WaitForSeconds(4f);
         narrator.Play("Ahem. It's stuck.");
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(4f);
 
         narrator.Play("Hello? The number is blocking the bar. It's basic physics, genius.");
-        yield return new WaitForSeconds(8f);
+        yield return new WaitForSeconds(10f);
 
         arrowHint.SetActive(true);
     }

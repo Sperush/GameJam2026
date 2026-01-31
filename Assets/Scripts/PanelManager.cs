@@ -11,16 +11,45 @@ public class PanelManager : MonoBehaviour
     public float duration = 0.5f; // Thời gian hiệu ứng
     public Ease openEase = Ease.OutBack; // Kiểu nảy khi mở
     public Ease closeEase = Ease.InBack; // Kiểu thu vào khi đóng
+    public Transform Canvas;
     public GameObject dark;
     public GameObject quitPanel;
     public GameObject settingPanel;
     public GameObject startPanel;
     public GameObject charPanel;
+    public GameObject boxPanel;
     public GameObject objOpen;
     public GameObject chat;
+    public VFXItem[] vfx;
     public void Awake()
     {
         Instance = this;
+    }
+    public void Play(VFXType type)
+    {
+        foreach (var m in vfx)
+        {
+            if (m.type == type)
+            {
+                m.obj.gameObject.SetActive(true);
+                m.obj.Play();
+                StartCoroutine(ReturnToPool(m.obj, m.type));
+            }
+        }
+    }
+    System.Collections.IEnumerator ReturnToPool(ParticleSystem vfx, VFXType type)
+    {
+        yield return new WaitForSeconds(vfx.main.duration);
+        if (type == VFXType.fire)
+        {
+            LabelReceiver m = vfx.transform.parent.GetComponent<LabelReceiver>();
+            m.lable.SetParent(GameController.Instance.CanvasUI);
+            vfx.transform.parent.gameObject.SetActive(false);
+        }
+        else
+        {
+            vfx.gameObject.SetActive(false);
+        }
     }
     public void OpenPanel(GameObject panel)
     {
