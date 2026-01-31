@@ -1,45 +1,45 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class LabelReceiver : MonoBehaviour
 {
-    private LabelBehaviour currentBehaviour;
+    public ButtonType typeBtn;
+    public Transform lable;      // label đang gắn
+    public Canvas canvas;        // canvas gốc
 
-    public Transform labelSpawnPoint; // nơi label bật ra
-
-    public void ApplyLabel(LabelData newData)
+    public bool ApplyLabel(Transform newLabel)
     {
-        // 🔁 nếu đã có label → đẩy label cũ ra
-        if (currentBehaviour != null)
+        DragLable newDrag = newLabel.GetComponent<DragLable>();
+        if (newDrag == null) return false;
+        // Nếu đã có label
+        if (lable != null)
         {
-            EjectCurrentLabel();
+            DragLable oldDrag = lable.GetComponent<DragLable>();
+
+            // Nếu cùng slot → thay thế
+            if (oldDrag.type != newDrag.type)
+            {
+                // đẩy label cũ ra canvas
+                lable.SetParent(canvas.transform);
+                lable.localPosition = Vector3.zero;
+            }
+            else
+            {
+                LabelReceiver receiver = oldDrag.GetComponentInParent<LabelReceiver>();
+                if (receiver != null)
+                {
+                    receiver.lable = null;
+                }
+                lable.SetParent(transform.parent);
+                lable.localPosition = Vector3.zero;
+                return false;
+            }
         }
 
-        // ➕ gắn label mới
-        GameObject behaviourObj =
-            Instantiate(newData.behaviourPrefab, transform);
-
-        currentBehaviour = behaviourObj.GetComponent<LabelBehaviour>();
-        currentBehaviour.OnApply();
-    }
-
-    void EjectCurrentLabel()
-    {
-        LabelData oldData = currentBehaviour.labelData;
-
-        currentBehaviour.OnRemove();
-        Destroy(currentBehaviour.gameObject);
-
-        // 🏷️ spawn lại label UI để player kéo tiếp
-        if (oldData.labelUIPrefab != null)
-        {
-            Vector3 spawnPos =
-                labelSpawnPoint != null
-                ? labelSpawnPoint.position
-                : transform.position + Vector3.right * 1.2f;
-
-            Instantiate(oldData.labelUIPrefab, spawnPos, Quaternion.identity);
-        }
-
-        currentBehaviour = null;
+        // Gắn label mới vào object
+        newLabel.SetParent(transform);
+        newLabel.localPosition = Vector3.zero;
+        lable = newLabel;
+        return true;
     }
 }

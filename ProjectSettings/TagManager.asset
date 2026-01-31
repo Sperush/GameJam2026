@@ -44,5 +44,8 @@ TagManager:
   - name: UI
     uniqueID: 2526834177
     locked: 0
+  - name: Lable
+    uniqueID: 3058363107
+    locked: 0
   m_RenderingLayers:
   - Default
